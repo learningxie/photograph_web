@@ -1,0 +1,162 @@
+﻿[
+  {
+    "id": "p001",
+    "title": "回眸一笑",
+    "image_url": "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f",
+    "icon": "💃",
+    "tags": {
+      "type": ["通用"],
+      "emotion": ["欢快明朗", "故事氛围"],
+      "scene": ["扫街", "海边"],
+      "clothing": ["连衣裙"],
+      "props": ["无道具"],
+      "people_count": ["单人"]
+    },
+    "key_points": ["身体侧对镜头约45度", "下巴微收，眼神看向镜头", "肩膀自然放松，不要耸肩"],
+    "guide_details": "先让模特背对镜头向前走，再突然喊名字，在回头瞬间按下快门。"
+  },
+  {
+    "id": "p002",
+    "title": "雨中沉思",
+    "image_url": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f",
+    "icon": "🚶‍♀️",
+    "tags": {
+      "type": ["通用"],
+      "emotion": ["阴郁情绪"],
+      "scene": ["扫街"],
+      "clothing": ["紧身衣"],
+      "props": ["雨伞"],
+      "people_count": ["单人"]
+    },
+    "key_points": ["单手撑伞，伞面微遮额头", "眼神低垂不看镜头", "另一只手插兜或自然垂下"],
+    "guide_details": "引导模特回忆遗憾小事，结合雨天环境光，适当降曝光强化情绪。"
+  },
+  {
+    "id": "p003",
+    "title": "海滩追逐",
+    "image_url": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1",
+    "icon": "👫",
+    "tags": {
+      "type": ["通用"],
+      "emotion": ["欢快明朗"],
+      "scene": ["海边"],
+      "clothing": ["百褶裙"],
+      "props": ["无道具"],
+      "people_count": ["双人"]
+    },
+    "key_points": ["两人一前一后奔跑", "前面回头笑，后面伸手抓", "步伐要大，展现动感"],
+    "guide_details": "使用连拍模式，真实跑动，不刻意看镜头，优先抓拍情绪。"
+  },
+  {
+    "id": "p004",
+    "title": "窗边剪影",
+    "image_url": "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
+    "icon": "👤",
+    "tags": {
+      "type": ["通用"],
+      "emotion": ["故事氛围"],
+      "scene": ["室内"],
+      "clothing": ["连衣裙"],
+      "props": ["无道具"],
+      "people_count": ["单人"]
+    },
+    "key_points": ["侧脸靠在玻璃上", "眼神看向窗外", "双手抱臂增强防御感"],
+    "guide_details": "室内尽量少开灯，借窗外自然光形成层次。"
+  },
+  {
+    "id": "p005",
+    "title": "花束遮眼",
+    "image_url": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d",
+    "icon": "💐",
+    "tags": {
+      "type": ["通用"],
+      "emotion": ["通用"],
+      "scene": ["森系"],
+      "clothing": ["公主裙"],
+      "props": ["花束"],
+      "people_count": ["单人"]
+    },
+    "key_points": ["用花束遮住半张脸", "眼神直视镜头", "身体微微前倾"],
+    "guide_details": "把花束当互动道具，帮助害羞模特快速进入状态。"
+  },
+  {
+    "id": "p006",
+    "title": "酷炫靠墙",
+    "image_url": "https://images.unsplash.com/photo-1521119989659-a83eee488004",
+    "icon": "🕴️",
+    "tags": {
+      "type": ["通用"],
+      "emotion": ["街头酷炫"],
+      "scene": ["扫街"],
+      "clothing": ["紧身衣"],
+      "props": ["无道具"],
+      "people_count": ["单人"]
+    },
+    "key_points": ["单脚踩墙，重心后倾", "双手交叉抱胸", "下巴微抬，眼神锐利"],
+    "guide_details": "低角度拍摄增强腿部比例与压迫感。"
+  },
+  {
+    "id": "p007",
+    "title": "森系野餐",
+    "image_url": "https://images.unsplash.com/photo-1517841905240-472988babdf9",
+    "icon": "👭",
+    "tags": {
+      "type": ["通用"],
+      "emotion": ["故事氛围"],
+      "scene": ["森系"],
+      "clothing": ["连衣裙"],
+      "props": ["气球"],
+      "people_count": ["双人"]
+    },
+    "key_points": ["两人背靠背坐草地", "手拿气球线", "抬头看天空"],
+    "guide_details": "让模特像真实野餐聊天，抓拍自然状态。"
+  },
+  {
+    "id": "p008",
+    "title": "室内情绪",
+    "image_url": "https://images.unsplash.com/photo-1544005313-94ddf0286df2",
+    "icon": "🛋️",
+    "tags": {
+      "type": ["通用"],
+      "emotion": ["阴郁情绪"],
+      "scene": ["室内"],
+      "clothing": ["紧身衣"],
+      "props": ["无道具"],
+      "people_count": ["单人"]
+    },
+    "key_points": ["蜷缩在沙发角落", "双手抱膝", "眼神看地面"],
+    "guide_details": "弱光拍摄，留出安静空间，让情绪自然流露。"
+  },
+  {
+    "id": "p009",
+    "title": "海边夕阳",
+    "image_url": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+    "icon": "🌅",
+    "tags": {
+      "type": ["通用"],
+      "emotion": ["故事氛围"],
+      "scene": ["海边"],
+      "clothing": ["连衣裙"],
+      "props": ["无道具"],
+      "people_count": ["单人"]
+    },
+    "key_points": ["背对镜头面向大海", "双手自然张开", "利用微风带动裙摆"],
+    "guide_details": "黄金时刻拍摄剪影，突出人与自然关系。"
+  },
+  {
+    "id": "p010",
+    "title": "气球飞舞",
+    "image_url": "https://images.unsplash.com/photo-1511988617509-a57c8a288659",
+    "icon": "🎈",
+    "tags": {
+      "type": ["通用"],
+      "emotion": ["欢快明朗"],
+      "scene": ["森系"],
+      "clothing": ["公主裙"],
+      "props": ["气球"],
+      "people_count": ["多人合照"]
+    },
+    "key_points": ["多人一起向上抛气球", "抬头大笑", "相互搂肩形成联系"],
+    "guide_details": "倒数统一动作，配合高速快门定格气球和表情。"
+  }
+]

@@ -1,0 +1,541 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>光影研究所</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;800;900&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/theme.css">
+<style>
+.chart-container { position: relative; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto; height: 350px; max-height: 400px; }
+@media (max-width: 768px) { .chart-container { height: 250px; } }
+.fade-in { animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; opacity: 0; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.snap-inline { scroll-snap-type: inline mandatory; }
+.snap-item { scroll-snap-align: start; }
+</style>
+</head>
+<body class="theme-bright">
+
+<div class="app-shell max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8">
+    <header class="topbar sticky top-4 z-50 mb-8 rounded-[28px] px-4 sm:px-5 py-4 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div class="w-full sm:w-auto flex items-center gap-4 mb-4 sm:mb-0">
+            <div class="brand-mark" aria-hidden="true"></div>
+            <div>
+            <h1 class="display-font text-2xl sm:text-3xl font-black tracking-tight flex items-center justify-center sm:justify-start gap-2">
+                光影研究所
+            </h1>
+            </div>
+        </div>
+
+        <nav class="main-nav flex gap-2 p-1.5 rounded-full overflow-x-auto hide-scrollbar w-full lg:w-auto">
+            <button id="nav-home" class="nav-btn active">首页</button>
+            <button id="nav-pose" class="nav-btn">姿势</button>
+            <button id="nav-bible" class="nav-btn">金句</button>
+        </nav>
+    </header>
+
+    <div id="section-home" class="view-section">
+        <div class="hero fade-in mb-10">
+            <div class="hero-content px-6 py-10 sm:p-12 lg:p-16 max-w-2xl min-h-[500px] flex flex-col justify-center">
+                <h2 class="display-font text-5xl sm:text-6xl lg:text-7xl font-black leading-[1.04]">拍照灵感<br>一键就绪</h2>
+                <p class="mt-6 max-w-xl text-base sm:text-lg leading-8">快速筛选姿势、查看要领、随机获得拍摄灵感。</p>
+                <div class="mt-8 flex flex-col sm:flex-row gap-3">
+                <button id="btn-home-random" class="primary-btn px-7 py-4 text-sm sm:text-base">
+                    随机方案
+                </button>
+                <button onclick="switchTab('pose')" class="secondary-btn px-7 py-4 text-sm sm:text-base">姿势库</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-5 flex items-end justify-between gap-4 fade-in delay-100">
+            <div>
+                <h3 class="section-title mt-2 text-3xl sm:text-4xl font-black">核心工具</h3>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div onclick="switchTab('pose')" class="tool-card fade-in delay-100 rounded-[28px] p-7 cursor-pointer min-h-[230px] flex flex-col justify-between">
+                <div class="relative z-10">
+                    <div class="tool-icon aperture mb-6"></div>
+                    <h4 class="display-font text-2xl font-black">姿势大全</h4>
+                    <p class="mt-3 text-sm sm:text-base leading-7">按情绪、场景、道具快速筛选。</p>
+                </div>
+                <div class="relative z-10 mt-6 flex items-center justify-between text-sm font-bold card-link"><span>打开图库</span><span>→</span></div>
+            </div>
+
+            <div onclick="switchTab('bible')" class="tool-card fade-in delay-200 rounded-[28px] p-7 cursor-pointer min-h-[230px] flex flex-col justify-between">
+                <div class="relative z-10">
+                    <div class="tool-icon book mb-6"></div>
+                    <h4 class="display-font text-2xl font-black">摄影圣经</h4>
+                    <p class="mt-3 text-sm sm:text-base leading-7">用一句话切换创作状态。</p>
+                </div>
+                <div class="relative z-10 mt-6 flex items-center justify-between text-sm font-bold card-link"><span>抽一句话</span><span>→</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="section-pose" class="view-section hidden fade-in">
+        <div class="mb-8 filter-shell rounded-[30px] p-5 sm:p-7">
+            <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5 mb-7">
+                <div>
+                    <h2 class="section-title mt-2 text-3xl sm:text-4xl font-black">探索姿势图库</h2>
+                </div>
+                <div class="result-badge rounded-2xl px-5 py-4 text-sm">
+                    当前结果 <span id="result-count" class="ml-2 text-3xl font-black align-middle">0</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6" id="filter-container"></div>
+
+            <div class="filter-actions flex flex-col sm:flex-row justify-between items-center gap-4 pt-4">
+                <div></div>
+                <div class="flex w-full sm:w-auto gap-3">
+                    <button id="btn-reset" class="ghost-btn flex-1 sm:flex-none px-5 py-3 text-sm">重置条件</button>
+                    <button id="btn-random" class="primary-btn flex-1 sm:flex-none px-6 py-3 text-sm">随机抽取</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="pose-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+        <div class="mt-6 flex justify-center">
+            <button id="btn-load-more" class="secondary-btn px-7 py-3 text-sm">加载更多</button>
+        </div>
+    </div>
+
+    <div id="section-bible" class="view-section hidden fade-in">
+        <div class="mb-8">
+            <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
+                <div>
+                    <h2 class="section-title mt-2 text-3xl sm:text-4xl font-black">摄影圣经</h2>
+                </div>
+                <button id="btn-next-quote" class="primary-btn px-6 py-3 text-sm">再来一句</button>
+            </div>
+
+            <div class="quote-stage flex flex-col items-center justify-center p-7 sm:p-12 text-center">
+                <div class="quote-mark">“</div>
+                <p id="quote-text" class="display-font max-w-4xl text-2xl sm:text-4xl lg:text-5xl font-bold leading-[1.55] transition-opacity duration-300"></p>
+                <p id="quote-author" class="mt-10 text-sm sm:text-base tracking-[0.24em] uppercase transition-opacity duration-300"></p>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="pose-modal" class="modal-backdrop fixed inset-0 hidden z-[100] flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+    <div class="modal-box rounded-[30px] w-full max-w-5xl max-h-[90vh] overflow-y-auto hide-scrollbar flex flex-col md:flex-row transform scale-95 transition-transform duration-300" id="modal-content-box">
+        <div class="modal-media md:w-[48%] flex items-center justify-center min-h-[300px] md:min-h-[620px] p-5 sm:p-7 relative">
+            <button id="btn-close-modal" class="absolute top-5 left-5 z-10 w-10 h-10 rounded-full transition-colors">×</button>
+            <img id="modal-image" alt="姿势参考图" class="w-full h-full max-h-[560px] object-cover rounded-[24px] hidden shadow-2xl" />
+            <div id="modal-image-placeholder" class="text-7xl"></div>
+        </div>
+        <div class="md:w-[52%] p-6 sm:p-9 flex flex-col">
+            <div class="flex flex-wrap gap-2 mb-4" id="modal-tags"></div>
+            <h2 id="modal-title" class="display-font text-3xl sm:text-4xl font-black mb-7"></h2>
+
+            <div class="info-card mb-5 p-5 rounded-2xl">
+                <h3 class="font-black text-[#ffcf72] mb-4 tracking-wide">姿势要领</h3>
+                <ul id="modal-keypoints" class="list-disc list-inside space-y-2 text-sm sm:text-base leading-7"></ul>
+            </div>
+
+            <div class="info-card mb-7 p-5 rounded-2xl">
+                <h3 class="font-black mb-4 tracking-wide">引导详解</h3>
+                <p id="modal-guide" class="text-sm sm:text-base leading-8"></p>
+            </div>
+
+            <div class="modal-actions mt-auto grid grid-cols-1 sm:grid-cols-3 gap-3 pt-6">
+                <button id="btn-favorite" class="ghost-btn py-3 text-sm">收藏</button>
+                <button id="btn-share" class="ghost-btn py-3 text-sm">分享</button>
+                <button id="btn-modal-random" class="primary-btn py-3 text-sm">下一个</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const API_BASE = '/api';
+const FAVORITES_KEY = 'pose_favorites_v1';
+const PAGE_SIZE = 6;
+const NAV_ACTIVE_CLASS = 'active';
+
+const filterConfig = {
+    emotion: { label: '情绪风格', options: ['所有', '欢快明朗', '阴郁情绪', '故事氛围', '街头酷炫', '通用'] },
+    scene: { label: '场景分类', options: ['所有', '森系', '海边', '扫街', '室内'] },
+    clothing: { label: '服装搭配', options: ['所有', '连衣裙', '百褶裙', '紧身衣', '公主裙'] },
+    props: { label: '使用道具', options: ['所有', '雨伞', '花束', '气球', '无道具'] },
+    people_count: { label: '出镜人数', options: ['所有', '单人', '双人', '多人合照'] }
+};
+
+let currentFilters = { emotion: '所有', scene: '所有', clothing: '所有', props: '所有', people_count: '所有' };
+let currentFilteredPoses = [];
+let currentPage = 1;
+let totalPages = 1;
+let currentModalPose = null;
+let currentQuoteId = null;
+
+function getFavorites() {
+    try {
+        return new Set(JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]'));
+    } catch (_) {
+        return new Set();
+    }
+}
+
+function setFavorites(favs) {
+    localStorage.setItem(FAVORITES_KEY, JSON.stringify(Array.from(favs)));
+}
+
+function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[char]));
+}
+
+function buildQuery({ includePaging = true } = {}) {
+    const params = new URLSearchParams();
+    Object.entries(currentFilters).forEach(([k, v]) => {
+        if (v !== '所有') params.set(k, v);
+    });
+    if (includePaging) {
+        params.set('page', String(currentPage));
+        params.set('pageSize', String(PAGE_SIZE));
+    }
+    return params.toString();
+}
+
+async function apiGet(path) {
+    const res = await fetch(path);
+    const payload = await res.json();
+    if (!res.ok || !payload.success) {
+        throw new Error(payload.message || '请求失败');
+    }
+    return payload.data;
+}
+
+function switchTab(tabId) {
+    const tabs = ['home', 'pose', 'bible'];
+    tabs.forEach(t => {
+        const btn = document.getElementById(`nav-${t}`);
+        const sec = document.getElementById(`section-${t}`);
+        if (!btn || !sec) return;
+
+        if (t === tabId) {
+            btn.classList.add(NAV_ACTIVE_CLASS);
+            sec.classList.remove('hidden');
+            sec.classList.add('fade-in');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            btn.classList.remove(NAV_ACTIVE_CLASS);
+            sec.classList.add('hidden');
+        }
+    });
+}
+
+function initNavigation() {
+    ['home', 'pose', 'bible'].forEach(tab => {
+        document.getElementById(`nav-${tab}`)?.addEventListener('click', () => switchTab(tab));
+    });
+
+    document.getElementById('btn-home-random')?.addEventListener('click', async () => {
+        try {
+            const pose = await apiGet(`${API_BASE}/poses/random`);
+            openModal(pose);
+        } catch (error) {
+            alert(error.message);
+        }
+    });
+}
+
+function initFilters() {
+    const container = document.getElementById('filter-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    Object.keys(filterConfig).forEach(key => {
+        const wrap = document.createElement('div');
+        wrap.className = 'flex flex-col gap-1';
+
+        const label = document.createElement('label');
+        label.className = 'filter-label';
+        label.textContent = filterConfig[key].label;
+
+        const select = document.createElement('select');
+        select.className = 'custom-select text-sm';
+        select.dataset.category = key;
+
+        filterConfig[key].options.forEach(opt => {
+            const option = document.createElement('option');
+            option.value = opt;
+            option.textContent = opt;
+            select.appendChild(option);
+        });
+
+        select.addEventListener('change', async (e) => {
+            currentFilters[key] = e.target.value;
+            currentPage = 1;
+            await loadPoses(false);
+        });
+
+        wrap.appendChild(label);
+        wrap.appendChild(select);
+        container.appendChild(wrap);
+    });
+
+    document.getElementById('btn-reset')?.addEventListener('click', async () => {
+        currentFilters = { emotion: '所有', scene: '所有', clothing: '所有', props: '所有', people_count: '所有' };
+        currentPage = 1;
+        document.querySelectorAll('#filter-container select').forEach(select => select.value = '所有');
+        await loadPoses(false);
+    });
+
+    document.getElementById('btn-random')?.addEventListener('click', openRandomModal);
+}
+
+function renderPoseGrid(append = false) {
+    const grid = document.getElementById('pose-grid');
+    if (!grid) return;
+    if (!append) grid.innerHTML = '';
+
+    if (!currentFilteredPoses.length && currentPage === 1) {
+        grid.innerHTML = '<div class="empty-state col-span-full py-16 text-center rounded-[28px]">没有找到匹配的姿势，请尝试减少筛选条件。</div>';
+        return;
+    }
+
+    const favorites = getFavorites();
+    currentFilteredPoses.forEach(pose => {
+        const card = document.createElement('div');
+        card.className = 'pose-card rounded-[28px] cursor-pointer';
+        card.onclick = () => openPoseDetail(pose.id);
+
+        const imgHolder = document.createElement('div');
+        imgHolder.className = 'pose-image flex items-center justify-center text-6xl overflow-hidden';
+
+        if (pose.image_url) {
+            const img = document.createElement('img');
+            img.src = pose.image_url;
+            img.alt = pose.title;
+            img.className = 'w-full h-full object-cover';
+            img.onerror = () => { imgHolder.textContent = pose.icon || '📷'; };
+            imgHolder.appendChild(img);
+        } else {
+            imgHolder.textContent = pose.icon || '📷';
+        }
+
+        const content = document.createElement('div');
+        content.className = 'relative z-10 p-5';
+        const fav = favorites.has(pose.id) ? '已收藏' : '收藏';
+
+        content.innerHTML = `
+          <div class="flex justify-between items-start gap-3 mb-4">
+            <h3 class="display-font font-black text-2xl leading-tight">${escapeHtml(pose.title)}</h3>
+            <span class="tag-pill shrink-0" title="收藏状态">${fav}</span>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <span class="tag-pill">${escapeHtml(pose.tags.emotion?.[0] || '')}</span>
+            <span class="tag-pill">${escapeHtml(pose.tags.scene?.[0] || '')}</span>
+            <span class="tag-pill">${escapeHtml(pose.tags.people_count?.[0] || '')}</span>
+          </div>
+        `;
+
+        card.appendChild(imgHolder);
+        card.appendChild(content);
+        grid.appendChild(card);
+    });
+}
+
+function updatePagination(total, pages) {
+    totalPages = pages;
+    const countEl = document.getElementById('result-count');
+    if (countEl) countEl.textContent = total;
+    const loadMoreBtn = document.getElementById('btn-load-more');
+    if (loadMoreBtn) loadMoreBtn.classList.toggle('hidden', currentPage >= totalPages);
+}
+
+async function loadPoses(append = false) {
+    try {
+        const query = buildQuery();
+        const data = await apiGet(`${API_BASE}/poses?${query}`);
+        currentFilteredPoses = data.items;
+        renderPoseGrid(append);
+        updatePagination(data.pagination.total, data.pagination.totalPages);
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
+async function openPoseDetail(id) {
+    try {
+        const pose = await apiGet(`${API_BASE}/poses/${id}`);
+        openModal(pose);
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
+function refreshFavoriteButton() {
+    const btn = document.getElementById('btn-favorite');
+    if (!btn || !currentModalPose) return;
+    const favorites = getFavorites();
+    const isFav = favorites.has(currentModalPose.id);
+    btn.textContent = isFav ? '已收藏' : '收藏';
+}
+
+function openModal(pose) {
+    currentModalPose = pose;
+    document.getElementById('modal-title').textContent = pose.title;
+
+    const modalImg = document.getElementById('modal-image');
+    const modalPlaceholder = document.getElementById('modal-image-placeholder');
+    if (pose.image_url) {
+        modalImg.src = pose.image_url;
+        modalImg.classList.remove('hidden');
+        modalPlaceholder.classList.add('hidden');
+        modalImg.onerror = () => {
+            modalImg.classList.add('hidden');
+            modalPlaceholder.textContent = pose.icon || '📷';
+            modalPlaceholder.classList.remove('hidden');
+        };
+    } else {
+        modalImg.classList.add('hidden');
+        modalPlaceholder.textContent = pose.icon || '📷';
+        modalPlaceholder.classList.remove('hidden');
+    }
+
+    const tagsContainer = document.getElementById('modal-tags');
+    tagsContainer.innerHTML = '';
+    Object.values(pose.tags).forEach(arr => {
+        arr.forEach(tag => {
+            if (tag !== '通用') {
+                tagsContainer.innerHTML += `<span class="tag-pill">${escapeHtml(tag)}</span>`;
+            }
+        });
+    });
+
+    const kpContainer = document.getElementById('modal-keypoints');
+    kpContainer.innerHTML = '';
+    pose.key_points.forEach(kp => {
+        kpContainer.innerHTML += `<li>${escapeHtml(kp)}</li>`;
+    });
+
+    document.getElementById('modal-guide').textContent = pose.guide_details;
+    refreshFavoriteButton();
+
+    const modal = document.getElementById('pose-modal');
+    const modalBox = document.getElementById('modal-content-box');
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        modalBox.classList.remove('scale-95');
+    }, 10);
+}
+
+function closeModal() {
+    const modal = document.getElementById('pose-modal');
+    const modalBox = document.getElementById('modal-content-box');
+    modal.classList.add('opacity-0');
+    modalBox.classList.add('scale-95');
+    setTimeout(() => modal.classList.add('hidden'), 300);
+}
+
+async function openRandomModal() {
+    try {
+        const query = buildQuery({ includePaging: false });
+        const pose = await apiGet(`${API_BASE}/poses/random${query ? `?${query}` : ''}`);
+        openModal(pose);
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
+async function displayRandomQuote() {
+    try {
+        const query = currentQuoteId ? `?excludeId=${encodeURIComponent(currentQuoteId)}` : '';
+        const q = await apiGet(`${API_BASE}/quotes/random${query}`);
+        const textEl = document.getElementById('quote-text');
+        const authorEl = document.getElementById('quote-author');
+        textEl.style.opacity = 0;
+        authorEl.style.opacity = 0;
+        setTimeout(() => {
+            textEl.textContent = q.content;
+            authorEl.textContent = '— ' + q.author;
+            textEl.style.opacity = 1;
+            authorEl.style.opacity = 1;
+        }, 300);
+        currentQuoteId = q.id;
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
+async function onShare() {
+    if (!currentModalPose) return;
+    const shareUrl = `${location.origin}/?pose=${encodeURIComponent(currentModalPose.id)}`;
+    const shareData = { title: currentModalPose.title, text: '看看这个拍摄姿势：' + currentModalPose.title, url: shareUrl };
+
+    try {
+        if (navigator.share) {
+            await navigator.share(shareData);
+            return;
+        }
+        await navigator.clipboard.writeText(shareUrl);
+        alert('分享链接已复制到剪贴板');
+    } catch (error) {
+        alert('分享失败，请稍后重试');
+    }
+}
+
+function onToggleFavorite() {
+    if (!currentModalPose) return;
+    const favorites = getFavorites();
+    if (favorites.has(currentModalPose.id)) favorites.delete(currentModalPose.id);
+    else favorites.add(currentModalPose.id);
+    setFavorites(favorites);
+    refreshFavoriteButton();
+    renderPoseGrid(false);
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+    initNavigation();
+    initFilters();
+    await loadPoses(false);
+    await displayRandomQuote();
+
+    document.getElementById('btn-close-modal')?.addEventListener('click', closeModal);
+    document.getElementById('btn-modal-random')?.addEventListener('click', openRandomModal);
+    document.getElementById('btn-next-quote')?.addEventListener('click', displayRandomQuote);
+    document.getElementById('btn-favorite')?.addEventListener('click', onToggleFavorite);
+    document.getElementById('btn-share')?.addEventListener('click', onShare);
+
+    document.getElementById('pose-modal')?.addEventListener('click', (e) => {
+        if (e.target.id === 'pose-modal') closeModal();
+    });
+
+    document.getElementById('btn-load-more')?.addEventListener('click', async () => {
+        if (currentPage >= totalPages) return;
+        currentPage += 1;
+        try {
+            const query = buildQuery();
+            const data = await apiGet(`${API_BASE}/poses?${query}`);
+            currentFilteredPoses = data.items;
+            renderPoseGrid(true);
+            updatePagination(data.pagination.total, data.pagination.totalPages);
+        } catch (error) {
+            alert(error.message);
+        }
+    });
+
+    const presetId = new URLSearchParams(location.search).get('pose');
+    if (presetId) {
+        await openPoseDetail(presetId);
+    }
+});
+</script>
+</body>
+</html>
