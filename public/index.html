@@ -10,126 +10,167 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;800;900&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/theme.css">
 <style>
-.chart-container { position: relative; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto; height: 350px; max-height: 400px; }
-@media (max-width: 768px) { .chart-container { height: 250px; } }
 .fade-in { animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; opacity: 0; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 .delay-100 { animation-delay: 100ms; }
 .delay-200 { animation-delay: 200ms; }
-.delay-300 { animation-delay: 300ms; }
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-.snap-inline { scroll-snap-type: inline mandatory; }
-.snap-item { scroll-snap-align: start; }
 </style>
 </head>
 <body class="theme-bright">
 
-<div class="app-shell max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8">
-    <header class="topbar sticky top-4 z-50 mb-8 rounded-[28px] px-4 sm:px-5 py-4 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div class="w-full sm:w-auto flex items-center gap-4 mb-4 sm:mb-0">
+<div class="app-layout">
+    <aside class="desktop-sidebar hidden md:flex">
+        <div class="sidebar-brand">
             <div class="brand-mark" aria-hidden="true"></div>
             <div>
-            <h1 class="display-font text-2xl sm:text-3xl font-black tracking-tight flex items-center justify-center sm:justify-start gap-2">
-                光影研究所
-            </h1>
+                <h1 class="display-font text-2xl font-black tracking-tight">光影研究所</h1>
+                <p class="text-xs font-bold tracking-[0.24em] uppercase">Photo Studio</p>
             </div>
         </div>
 
-        <nav class="main-nav flex gap-2 p-1.5 rounded-full overflow-x-auto hide-scrollbar w-full lg:w-auto">
-            <button id="nav-home" class="nav-btn active">首页</button>
-            <button id="nav-pose" class="nav-btn">姿势</button>
-            <button id="nav-bible" class="nav-btn">金句</button>
+        <div class="sidebar-label">工作台</div>
+        <nav class="sidebar-nav">
+            <button id="nav-home" class="side-nav-btn active">
+                <span class="nav-dot home"></span>
+                <span>发现首页</span>
+            </button>
+            <button id="nav-pose" class="side-nav-btn">
+                <span class="nav-dot pose"></span>
+                <span>姿势库</span>
+            </button>
+            <button id="nav-bible" class="side-nav-btn">
+                <span class="nav-dot bible"></span>
+                <span>摄影圣经</span>
+            </button>
         </nav>
-    </header>
 
-    <div id="section-home" class="view-section">
-        <div class="hero fade-in mb-10">
-            <div class="hero-content px-6 py-10 sm:p-12 lg:p-16 max-w-2xl min-h-[500px] flex flex-col justify-center">
-                <h2 class="display-font text-5xl sm:text-6xl lg:text-7xl font-black leading-[1.04]">拍照灵感<br>一键就绪</h2>
-                <p class="mt-6 max-w-xl text-base sm:text-lg leading-8">快速筛选姿势、查看要领、随机获得拍摄灵感。</p>
-                <div class="mt-8 flex flex-col sm:flex-row gap-3">
-                <button id="btn-home-random" class="primary-btn px-7 py-4 text-sm sm:text-base">
-                    随机方案
-                </button>
-                <button onclick="switchTab('pose')" class="secondary-btn px-7 py-4 text-sm sm:text-base">姿势库</button>
+        <div class="sidebar-card">
+            <p>需要一点现场灵感？</p>
+            <button id="btn-sidebar-random" class="primary-btn w-full px-5 py-3 text-sm">随机方案</button>
+        </div>
+    </aside>
+
+    <main id="main-scroll-area" class="main-panel hide-scrollbar">
+        <header class="mobile-topbar md:hidden">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="brand-mark compact" aria-hidden="true"></div>
+                <div class="min-w-0">
+                    <h1 class="display-font text-xl font-black truncate">光影研究所</h1>
+                    <p class="text-[10px] font-bold tracking-[0.18em] uppercase">Photo Studio</p>
+                </div>
+            </div>
+            <button id="btn-mobile-random" class="icon-action" aria-label="随机方案"></button>
+        </header>
+
+        <div class="content-shell">
+            <div id="section-home" class="view-section">
+                <div class="hero fade-in mb-8 lg:mb-10">
+                    <div class="hero-content px-6 py-10 sm:p-12 lg:p-16 max-w-2xl min-h-[500px] flex flex-col justify-center">
+                        <p class="eyebrow mb-4">创作工作台</p>
+                        <h2 class="display-font text-5xl sm:text-6xl lg:text-7xl font-black leading-[1.04]">拍照灵感<br>一键就绪</h2>
+                        <p class="mt-6 max-w-xl text-base sm:text-lg leading-8">快速筛选姿势、查看要领，用一句话切换创作状态。</p>
+                        <div class="mt-8 flex flex-col sm:flex-row gap-3">
+                            <button id="btn-home-random" class="primary-btn px-7 py-4 text-sm sm:text-base">随机方案</button>
+                            <button onclick="switchTab('pose')" class="secondary-btn px-7 py-4 text-sm sm:text-base">姿势库</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-head fade-in delay-100">
+                    <div>
+                        <p class="eyebrow">常用工具</p>
+                        <h3 class="section-title mt-2 text-3xl sm:text-4xl font-black">核心工具</h3>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div onclick="switchTab('pose')" class="tool-card fade-in delay-100 rounded-[28px] p-7 cursor-pointer min-h-[230px] flex flex-col justify-between">
+                        <div class="relative z-10">
+                            <div class="tool-icon aperture mb-6"></div>
+                            <h4 class="display-font text-2xl font-black">姿势大全</h4>
+                            <p class="mt-3 text-sm sm:text-base leading-7">按情绪、场景、道具快速筛选。</p>
+                        </div>
+                        <div class="relative z-10 mt-6 flex items-center justify-between text-sm font-bold card-link"><span>打开图库</span><span>→</span></div>
+                    </div>
+
+                    <div onclick="switchTab('bible')" class="tool-card fade-in delay-200 rounded-[28px] p-7 cursor-pointer min-h-[230px] flex flex-col justify-between">
+                        <div class="relative z-10">
+                            <div class="tool-icon book mb-6"></div>
+                            <h4 class="display-font text-2xl font-black">摄影圣经</h4>
+                            <p class="mt-3 text-sm sm:text-base leading-7">用一句话切换创作状态。</p>
+                        </div>
+                        <div class="relative z-10 mt-6 flex items-center justify-between text-sm font-bold card-link"><span>抽一句话</span><span>→</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="section-pose" class="view-section hidden fade-in">
+                <div class="mb-8 filter-shell rounded-[30px] p-5 sm:p-7">
+                    <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5 mb-7">
+                        <div>
+                            <p class="eyebrow">Pose Library</p>
+                            <h2 class="section-title mt-2 text-3xl sm:text-4xl font-black">探索姿势图库</h2>
+                        </div>
+                        <div class="result-badge rounded-2xl px-5 py-4 text-sm">
+                            当前结果 <span id="result-count" class="ml-2 text-3xl font-black align-middle">0</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6" id="filter-container"></div>
+
+                    <div class="filter-actions flex flex-col sm:flex-row justify-between items-center gap-4 pt-4">
+                        <div></div>
+                        <div class="flex w-full sm:w-auto gap-3">
+                            <button id="btn-reset" class="ghost-btn flex-1 sm:flex-none px-5 py-3 text-sm">重置条件</button>
+                            <button id="btn-random" class="primary-btn flex-1 sm:flex-none px-6 py-3 text-sm">随机抽取</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="pose-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+                <div class="mt-6 flex justify-center">
+                    <button id="btn-load-more" class="secondary-btn px-7 py-3 text-sm">加载更多</button>
+                </div>
+            </div>
+
+            <div id="section-bible" class="view-section hidden fade-in">
+                <div class="quote-page">
+                    <div class="quote-page-head">
+                        <div>
+                            <p class="eyebrow">Photography Bible</p>
+                            <h2 class="section-title mt-2 text-3xl sm:text-4xl font-black">摄影圣经</h2>
+                        </div>
+                        <button id="btn-next-quote" class="primary-btn px-6 py-3 text-sm">再来一句</button>
+                    </div>
+
+                    <div class="quote-stage flex flex-col items-center justify-center p-7 sm:p-12 text-center">
+                        <div class="quote-mark">“</div>
+                        <p id="quote-text" class="display-font max-w-4xl text-2xl sm:text-4xl lg:text-5xl font-bold leading-[1.55] transition-opacity duration-300"></p>
+                        <p id="quote-author" class="mt-10 text-sm sm:text-base tracking-[0.24em] uppercase transition-opacity duration-300"></p>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <div class="mb-5 flex items-end justify-between gap-4 fade-in delay-100">
-            <div>
-                <h3 class="section-title mt-2 text-3xl sm:text-4xl font-black">核心工具</h3>
-            </div>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div onclick="switchTab('pose')" class="tool-card fade-in delay-100 rounded-[28px] p-7 cursor-pointer min-h-[230px] flex flex-col justify-between">
-                <div class="relative z-10">
-                    <div class="tool-icon aperture mb-6"></div>
-                    <h4 class="display-font text-2xl font-black">姿势大全</h4>
-                    <p class="mt-3 text-sm sm:text-base leading-7">按情绪、场景、道具快速筛选。</p>
-                </div>
-                <div class="relative z-10 mt-6 flex items-center justify-between text-sm font-bold card-link"><span>打开图库</span><span>→</span></div>
-            </div>
-
-            <div onclick="switchTab('bible')" class="tool-card fade-in delay-200 rounded-[28px] p-7 cursor-pointer min-h-[230px] flex flex-col justify-between">
-                <div class="relative z-10">
-                    <div class="tool-icon book mb-6"></div>
-                    <h4 class="display-font text-2xl font-black">摄影圣经</h4>
-                    <p class="mt-3 text-sm sm:text-base leading-7">用一句话切换创作状态。</p>
-                </div>
-                <div class="relative z-10 mt-6 flex items-center justify-between text-sm font-bold card-link"><span>抽一句话</span><span>→</span></div>
-            </div>
-        </div>
-    </div>
-
-    <div id="section-pose" class="view-section hidden fade-in">
-        <div class="mb-8 filter-shell rounded-[30px] p-5 sm:p-7">
-            <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5 mb-7">
-                <div>
-                    <h2 class="section-title mt-2 text-3xl sm:text-4xl font-black">探索姿势图库</h2>
-                </div>
-                <div class="result-badge rounded-2xl px-5 py-4 text-sm">
-                    当前结果 <span id="result-count" class="ml-2 text-3xl font-black align-middle">0</span>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6" id="filter-container"></div>
-
-            <div class="filter-actions flex flex-col sm:flex-row justify-between items-center gap-4 pt-4">
-                <div></div>
-                <div class="flex w-full sm:w-auto gap-3">
-                    <button id="btn-reset" class="ghost-btn flex-1 sm:flex-none px-5 py-3 text-sm">重置条件</button>
-                    <button id="btn-random" class="primary-btn flex-1 sm:flex-none px-6 py-3 text-sm">随机抽取</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="pose-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-
-        <div class="mt-6 flex justify-center">
-            <button id="btn-load-more" class="secondary-btn px-7 py-3 text-sm">加载更多</button>
-        </div>
-    </div>
-
-    <div id="section-bible" class="view-section hidden fade-in">
-        <div class="mb-8">
-            <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
-                <div>
-                    <h2 class="section-title mt-2 text-3xl sm:text-4xl font-black">摄影圣经</h2>
-                </div>
-                <button id="btn-next-quote" class="primary-btn px-6 py-3 text-sm">再来一句</button>
-            </div>
-
-            <div class="quote-stage flex flex-col items-center justify-center p-7 sm:p-12 text-center">
-                <div class="quote-mark">“</div>
-                <p id="quote-text" class="display-font max-w-4xl text-2xl sm:text-4xl lg:text-5xl font-bold leading-[1.55] transition-opacity duration-300"></p>
-                <p id="quote-author" class="mt-10 text-sm sm:text-base tracking-[0.24em] uppercase transition-opacity duration-300"></p>
-
-            </div>
-        </div>
-    </div>
+    </main>
 </div>
+
+<nav class="mobile-bottom-nav md:hidden">
+    <button id="mobile-nav-home" class="bottom-nav-btn active">
+        <span class="bottom-nav-icon home"></span>
+        <span>首页</span>
+    </button>
+    <button id="mobile-nav-pose" class="bottom-nav-btn">
+        <span class="bottom-nav-icon pose"></span>
+        <span>姿势</span>
+    </button>
+    <button id="mobile-nav-bible" class="bottom-nav-btn">
+        <span class="bottom-nav-icon bible"></span>
+        <span>金句</span>
+    </button>
+</nav>
 
 <div id="pose-modal" class="modal-backdrop fixed inset-0 hidden z-[100] flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
     <div class="modal-box rounded-[30px] w-full max-w-5xl max-h-[90vh] overflow-y-auto hide-scrollbar flex flex-col md:flex-row transform scale-95 transition-transform duration-300" id="modal-content-box">
@@ -219,38 +260,52 @@ async function apiGet(path) {
     return payload.data;
 }
 
+async function openUnfilteredRandomModal() {
+    try {
+        const pose = await apiGet(`${API_BASE}/poses/random`);
+        openModal(pose);
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
 function switchTab(tabId) {
     const tabs = ['home', 'pose', 'bible'];
     tabs.forEach(t => {
-        const btn = document.getElementById(`nav-${t}`);
         const sec = document.getElementById(`section-${t}`);
-        if (!btn || !sec) return;
+        const navButtons = [
+            document.getElementById(`nav-${t}`),
+            document.getElementById(`mobile-nav-${t}`)
+        ].filter(Boolean);
+        if (!sec) return;
 
         if (t === tabId) {
-            btn.classList.add(NAV_ACTIVE_CLASS);
+            navButtons.forEach(btn => btn.classList.add(NAV_ACTIVE_CLASS));
             sec.classList.remove('hidden');
             sec.classList.add('fade-in');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         } else {
-            btn.classList.remove(NAV_ACTIVE_CLASS);
+            navButtons.forEach(btn => btn.classList.remove(NAV_ACTIVE_CLASS));
             sec.classList.add('hidden');
         }
     });
+
+    const scrollArea = document.getElementById('main-scroll-area');
+    if (scrollArea && window.matchMedia('(min-width: 768px)').matches) {
+        scrollArea.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 }
 
 function initNavigation() {
     ['home', 'pose', 'bible'].forEach(tab => {
         document.getElementById(`nav-${tab}`)?.addEventListener('click', () => switchTab(tab));
+        document.getElementById(`mobile-nav-${tab}`)?.addEventListener('click', () => switchTab(tab));
     });
 
-    document.getElementById('btn-home-random')?.addEventListener('click', async () => {
-        try {
-            const pose = await apiGet(`${API_BASE}/poses/random`);
-            openModal(pose);
-        } catch (error) {
-            alert(error.message);
-        }
-    });
+    document.getElementById('btn-home-random')?.addEventListener('click', openUnfilteredRandomModal);
+    document.getElementById('btn-sidebar-random')?.addEventListener('click', openUnfilteredRandomModal);
+    document.getElementById('btn-mobile-random')?.addEventListener('click', openUnfilteredRandomModal);
 }
 
 function initFilters() {
