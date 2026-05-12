@@ -172,6 +172,18 @@ function removeUploadedFile(file) {
   fs.unlink(file.path, () => {});
 }
 
+function removePoseImageFile(pose) {
+  const imageUrl = String(pose?.image_url || '');
+  if (!imageUrl.startsWith('/uploads/')) return;
+
+  const uploadRoot = path.resolve(UPLOAD_DIR);
+  const imagePath = path.resolve(UPLOAD_DIR, imageUrl.replace(/^\/uploads\//, ''));
+  const relativePath = path.relative(uploadRoot, imagePath);
+  if (relativePath.startsWith('..') || path.isAbsolute(relativePath)) return;
+
+  fs.unlink(imagePath, () => {});
+}
+
 function ok(res, data, message = 'ok') {
   res.json({ success: true, data, message });
 }
@@ -293,6 +305,23 @@ app.put('/api/poses/:id', (req, res) => {
   }
 });
 
+app.delete('/api/poses/:id', (req, res) => {
+  try {
+    const { poses } = loadData();
+    const index = poses.findIndex((pose) => pose.id === req.params.id);
+    if (index === -1) {
+      return fail(res, 404, '姿势不存在');
+    }
+
+    const [deleted] = poses.splice(index, 1);
+    writeJson(POSES_PATH, poses);
+    removePoseImageFile(deleted);
+    return ok(res, toPublicPose(deleted), '姿势已删除');
+  } catch (error) {
+    return fail(res, 500, error.message);
+  }
+});
+
 app.get('/api/poses/random', (req, res) => {
   try {
     const { poses } = loadData();
@@ -335,6 +364,10 @@ app.get('/*splat', (req, res) => {
   res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;

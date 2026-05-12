@@ -26,6 +26,9 @@
 .locked-input { background: #f7fbff; color: var(--muted); }
 .list-box { border: 1px solid var(--line); border-radius: 20px; background: rgba(255,255,255,.92); box-shadow: var(--shadow); }
 .list-item[aria-selected="true"] { background: #eef8ff; color: var(--blue-dark); }
+.danger-btn { display: inline-flex; align-items: center; justify-content: center; gap: .55rem; border-radius: 999px; border: 1px solid #fecaca; color: #be123c; background: #fff1f2; font-weight: 900; transition: transform .2s ease, background .2s ease, border-color .2s ease; }
+.danger-btn:hover { transform: translateY(-2px); background: #ffe4e6; border-color: #fda4af; }
+.danger-btn:disabled, .primary-btn:disabled { cursor: not-allowed; opacity: .62; transform: none; }
 @media (max-width: 767px) {
   .admin-main { padding: 1rem .75rem 1.5rem; }
   .preview-image, .upload-box { min-height: 300px; }
@@ -68,12 +71,18 @@
         </div>
       </div>
       <div id="selected-summary" class="status-box hidden p-4">
-        <div class="flex items-center gap-3">
-          <div id="selected-icon" class="tool-icon aperture shrink-0"></div>
-          <div class="min-w-0">
-            <p class="text-xs font-black tracking-[0.18em] uppercase text-slate-500">当前编辑</p>
-            <p id="selected-title" class="display-font text-xl font-black truncate"></p>
-            <p id="selected-id" class="text-sm text-slate-500"></p>
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div class="flex items-center gap-3 min-w-0">
+            <div id="selected-icon" class="tool-icon aperture shrink-0"></div>
+            <div class="min-w-0">
+              <p class="text-xs font-black tracking-[0.18em] uppercase text-slate-500">当前编辑</p>
+              <p id="selected-title" class="display-font text-xl font-black truncate"></p>
+              <p id="selected-id" class="text-sm text-slate-500"></p>
+            </div>
+          </div>
+          <div class="flex flex-col sm:items-end gap-2 shrink-0">
+            <button type="button" id="btn-delete-pose" class="danger-btn px-5 py-3 text-sm">删除姿势</button>
+            <p class="text-xs text-slate-500">删除后将从图库移除</p>
           </div>
         </div>
       </div>
@@ -312,6 +321,32 @@ function resetToCreate() {
   renderPosePicker();
 }
 
+async function deleteCurrentPose() {
+  if (!currentPose) {
+    showStatus('请先选择要删除的姿势。', 'error');
+    return;
+  }
+
+  const confirmed = window.confirm(`确定删除「${currentPose.title}」吗？删除后将从图库移除。`);
+  if (!confirmed) return;
+
+  const button = document.getElementById('btn-delete-pose');
+  try {
+    button.disabled = true;
+    button.textContent = '正在删除...';
+    showStatus('正在删除姿势...', 'info');
+    const deleted = await apiRequest(`/api/poses/${currentPose.id}`, { method: 'DELETE' });
+    resetToCreate();
+    await loadReferenceData();
+    showStatus(`已删除 ${deleted.id} · ${deleted.title}`, 'success');
+  } catch (error) {
+    showStatus(error.message, 'error');
+  } finally {
+    button.disabled = false;
+    button.textContent = '删除姿势';
+  }
+}
+
 function renderPosePicker() {
   const picker = document.getElementById('pose-picker');
   const term = searchTerm.trim().toLowerCase();
@@ -439,6 +474,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('btn-create-mode').addEventListener('click', () => {
       resetToCreate();
     });
+
+    document.getElementById('btn-delete-pose').addEventListener('click', deleteCurrentPose);
 
     document.getElementById('btn-reset-form').addEventListener('click', () => {
       if (currentMode === 'edit') {
