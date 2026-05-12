@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>添加姿势 - 光影研究所</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;800;900&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/theme.css">
+<style>
+.admin-shell {
+  min-height: 100vh;
+  overflow-y: auto;
+}
+.admin-main {
+  width: min(100%, 1120px);
+  margin: 0 auto;
+  padding: 2rem;
+}
+.admin-panel,
+.upload-box,
+.field-panel {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: var(--shadow);
+}
+.admin-panel {
+  border-radius: 30px;
+}
+.upload-box {
+  min-height: 420px;
+  border-radius: 24px;
+  overflow: hidden;
+}
+.preview-image {
+  width: 100%;
+  height: 100%;
+  min-height: 420px;
+  object-fit: cover;
+}
+.admin-input,
+.admin-textarea {
+  width: 100%;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fff;
+  padding: 0.86rem 0.95rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.admin-textarea {
+  min-height: 132px;
+  resize: vertical;
+}
+.admin-input:focus,
+.admin-textarea:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 4px rgba(37, 167, 242, 0.13);
+}
+.field-panel {
+  border-radius: 20px;
+  padding: 1rem;
+}
+.check-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.2rem;
+  border: 1px solid #d4ecfb;
+  border-radius: 999px;
+  padding: 0.42rem 0.7rem;
+  color: #28617a;
+  background: #eef8ff;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+.check-option input {
+  accent-color: var(--blue-dark);
+}
+.status-box {
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: #f8fcff;
+  color: var(--muted);
+}
+@media (max-width: 767px) {
+  .admin-main {
+    padding: 1rem 0.75rem 1.5rem;
+  }
+  .preview-image,
+  .upload-box {
+    min-height: 300px;
+  }
+}
+</style>
+</head>
+<body class="theme-bright admin-shell">
+<main class="admin-main">
+  <header class="mb-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+    <div>
+      <div class="flex items-center gap-3 mb-4">
+        <div class="brand-mark compact" aria-hidden="true"></div>
+        <div>
+          <h1 class="display-font text-2xl font-black">姿势数据管理</h1>
+          <p class="text-xs font-bold tracking-[0.2em] uppercase text-slate-500">Pose Admin</p>
+        </div>
+      </div>
+      <p class="eyebrow">新增姿势</p>
+      <h2 class="section-title mt-2 text-3xl sm:text-5xl font-black">添加一条新的拍摄姿势</h2>
+    </div>
+    <a href="/" class="secondary-btn px-6 py-3 text-sm">返回图库</a>
+  </header>
+
+  <form id="pose-form" class="admin-panel p-5 sm:p-7" enctype="multipart/form-data">
+    <div class="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-6">
+      <section>
+        <label class="filter-label block mb-2" for="image">姿势图片</label>
+        <label class="upload-box flex items-center justify-center cursor-pointer relative" for="image">
+          <input id="image" name="image" type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="sr-only" required>
+          <img id="preview" class="preview-image hidden" alt="姿势图片预览">
+          <div id="upload-empty" class="p-8 text-center">
+            <div class="tool-icon aperture mx-auto mb-5"></div>
+            <p class="display-font text-2xl font-black mb-2">选择图片</p>
+            <p class="text-sm leading-7 text-slate-500">支持 JPG、PNG、WEBP、GIF，上传后会保存到本地素材目录。</p>
+          </div>
+        </label>
+      </section>
+
+      <section class="space-y-5">
+        <div>
+          <label class="filter-label block mb-2" for="title">姿势标题</label>
+          <input id="title" name="title" class="admin-input" type="text" placeholder="例如：窗边回眸" required>
+        </div>
+
+        <div id="tag-fields" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+
+        <div>
+          <label class="filter-label block mb-2" for="key_points">姿势要领</label>
+          <textarea id="key_points" name="key_points" class="admin-textarea" placeholder="每行一条，例如：&#10;身体侧对镜头&#10;肩膀自然放松" required></textarea>
+        </div>
+
+        <div>
+          <label class="filter-label block mb-2" for="guide_details">引导详解</label>
+          <textarea id="guide_details" name="guide_details" class="admin-textarea" placeholder="写下给模特的引导话术或拍摄提醒" required></textarea>
+        </div>
+      </section>
+    </div>
+
+    <div class="filter-actions mt-7 pt-5 flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between">
+      <div id="status" class="status-box hidden px-4 py-3 text-sm"></div>
+      <div class="flex flex-col sm:flex-row gap-3 lg:ml-auto">
+        <button type="button" id="btn-reset-form" class="ghost-btn px-6 py-3 text-sm">清空表单</button>
+        <button type="submit" id="btn-submit" class="primary-btn px-7 py-3 text-sm">保存姿势</button>
+      </div>
+    </div>
+  </form>
+</main>
+
+<script>
+const API_BASE = '/api';
+const tagLabels = {
+  emotion: '情绪风格',
+  scene: '场景分类',
+  clothing: '服装搭配',
+  props: '使用道具',
+  people_count: '出镜人数'
+};
+
+let objectUrl = null;
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[char]));
+}
+
+async function apiGet(path) {
+  const res = await fetch(path);
+  const payload = await res.json();
+  if (!res.ok || !payload.success) {
+    throw new Error(payload.message || '请求失败');
+  }
+  return payload.data;
+}
+
+function showStatus(message, type = 'info') {
+  const status = document.getElementById('status');
+  status.textContent = message;
+  status.classList.remove('hidden');
+  status.style.borderColor = type === 'error' ? '#fecaca' : type === 'success' ? '#bbf7d0' : 'var(--line)';
+  status.style.background = type === 'error' ? '#fff1f2' : type === 'success' ? '#f0fdf4' : '#f8fcff';
+  status.style.color = type === 'error' ? '#be123c' : type === 'success' ? '#166534' : 'var(--muted)';
+}
+
+function selectedValuesFor(key) {
+  return Array.from(document.querySelectorAll(`input[name="${key}[]"]:checked`)).map((input) => input.value);
+}
+
+function addCustomTag(key) {
+  const input = document.getElementById(`${key}-new`);
+  const value = input.value.trim();
+  if (!value) return;
+
+  const existing = Array.from(document.querySelectorAll(`input[name="${key}[]"]`)).some((item) => item.value === value);
+  if (existing) {
+    document.querySelector(`input[name="${key}[]"][value="${CSS.escape(value)}"]`).checked = true;
+    input.value = '';
+    return;
+  }
+
+  const options = document.getElementById(`${key}-options`);
+  const label = document.createElement('label');
+  label.className = 'check-option';
+  label.innerHTML = `<input type="checkbox" name="${key}[]" value="${escapeHtml(value)}" checked><span>${escapeHtml(value)}</span>`;
+  options.appendChild(label);
+  input.value = '';
+}
+
+function renderTagField(key, options) {
+  const section = document.createElement('section');
+  section.className = 'field-panel';
+  section.innerHTML = `
+    <label class="filter-label block mb-3">${escapeHtml(tagLabels[key])}</label>
+    <div id="${key}-options" class="flex flex-wrap gap-2 mb-3">
+      ${options.map((option) => `
+        <label class="check-option">
+          <input type="checkbox" name="${key}[]" value="${escapeHtml(option)}">
+          <span>${escapeHtml(option)}</span>
+        </label>
+      `).join('')}
+    </div>
+    <div class="flex gap-2">
+      <input id="${key}-new" class="admin-input text-sm py-2" type="text" placeholder="新增${escapeHtml(tagLabels[key])}">
+      <button class="secondary-btn px-4 py-2 text-sm shrink-0" type="button" data-add-tag="${key}">添加</button>
+    </div>
+  `;
+  return section;
+}
+
+async function initTags() {
+  const tags = await apiGet(`${API_BASE}/pose-tags`);
+  const container = document.getElementById('tag-fields');
+  container.innerHTML = '';
+  Object.keys(tagLabels).forEach((key) => {
+    container.appendChild(renderTagField(key, tags[key] || []));
+  });
+  document.querySelectorAll('[data-add-tag]').forEach((button) => {
+    button.addEventListener('click', () => addCustomTag(button.dataset.addTag));
+  });
+  Object.keys(tagLabels).forEach((key) => {
+    document.getElementById(`${key}-new`)?.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        addCustomTag(key);
+      }
+    });
+  });
+}
+
+function initImagePreview() {
+  const input = document.getElementById('image');
+  const preview = document.getElementById('preview');
+  const empty = document.getElementById('upload-empty');
+
+  input.addEventListener('change', () => {
+    if (objectUrl) URL.revokeObjectURL(objectUrl);
+    const file = input.files?.[0];
+    if (!file) {
+      preview.classList.add('hidden');
+      empty.classList.remove('hidden');
+      return;
+    }
+    objectUrl = URL.createObjectURL(file);
+    preview.src = objectUrl;
+    preview.classList.remove('hidden');
+    empty.classList.add('hidden');
+  });
+}
+
+function validateForm() {
+  for (const key of Object.keys(tagLabels)) {
+    if (!selectedValuesFor(key).length) {
+      throw new Error(`请至少选择或新增一个${tagLabels[key]}`);
+    }
+  }
+}
+
+function resetForm() {
+  document.getElementById('pose-form').reset();
+  document.querySelectorAll('#tag-fields input[type="checkbox"]').forEach((input) => { input.checked = false; });
+  const preview = document.getElementById('preview');
+  const empty = document.getElementById('upload-empty');
+  preview.classList.add('hidden');
+  empty.classList.remove('hidden');
+  if (objectUrl) {
+    URL.revokeObjectURL(objectUrl);
+    objectUrl = null;
+  }
+}
+
+async function onSubmit(event) {
+  event.preventDefault();
+  const submit = document.getElementById('btn-submit');
+  try {
+    validateForm();
+    submit.disabled = true;
+    submit.textContent = '保存中...';
+    showStatus('正在保存姿势数据...', 'info');
+
+    const formData = new FormData(event.currentTarget);
+    const res = await fetch(`${API_BASE}/poses`, {
+      method: 'POST',
+      body: formData
+    });
+    const payload = await res.json();
+    if (!res.ok || !payload.success) {
+      throw new Error(payload.message || '保存失败');
+    }
+
+    showStatus(`保存成功，新姿势 ID：${payload.data.id}`, 'success');
+    resetForm();
+    await initTags();
+  } catch (error) {
+    showStatus(error.message, 'error');
+  } finally {
+    submit.disabled = false;
+    submit.textContent = '保存姿势';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    await initTags();
+    initImagePreview();
+    document.getElementById('pose-form').addEventListener('submit', onSubmit);
+    document.getElementById('btn-reset-form').addEventListener('click', () => {
+      resetForm();
+      showStatus('表单已清空，可以继续添加。', 'info');
+    });
+  } catch (error) {
+    showStatus(error.message, 'error');
+  }
+});
+</script>
+</body>
+</html>

@@ -1,22 +1,50 @@
 ﻿const fs = require('fs');
 const path = require('path');
 const express = require('express');
+const multer = require('multer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 const DATA_DIR = path.join(__dirname, '..', 'data');
+const PUBLIC_DIR = path.join(__dirname, '..', 'public');
+const UPLOAD_DIR = path.join(PUBLIC_DIR, 'uploads');
 const POSES_PATH = path.join(DATA_DIR, 'poses.json');
 const QUOTES_PATH = path.join(DATA_DIR, 'quotes.json');
 
+fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '..', 'public')));
+app.use(express.static(PUBLIC_DIR));
 
 const allowedTagKeys = ['type', 'emotion', 'scene', 'clothing', 'props', 'people_count'];
+const editableTagKeys = ['emotion', 'scene', 'clothing', 'props', 'people_count'];
+const imageMimeTypes = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
+
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: (_req, _file, cb) => cb(null, UPLOAD_DIR),
+    filename: (_req, file, cb) => {
+      const ext = path.extname(file.originalname).toLowerCase() || '.jpg';
+      cb(null, `pose-${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`);
+    }
+  }),
+  limits: { fileSize: 8 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (!imageMimeTypes.has(file.mimetype)) {
+      return cb(new Error('只支持 JPG、PNG、WEBP 或 GIF 图片'));
+    }
+    return cb(null, true);
+  }
+});
 
 function readJson(filePath) {
   const raw = fs.readFileSync(filePath, 'utf8').replace(/^\uFEFF/, '');
   return JSON.parse(raw);
+}
+
+function writeJson(filePath, data) {
+  fs.writeFileSync(filePath, `${JSON.stringify(data, null, 2)}\n`, 'utf8');
 }
 
 function validatePose(pose) {
@@ -74,6 +102,43 @@ function filterPoses(poses, query) {
   });
 }
 
+function collectPoseTags(poses) {
+  return editableTagKeys.reduce((acc, key) => {
+    const values = new Set();
+    poses.forEach((pose) => {
+      (pose.tags[key] || []).forEach((tag) => values.add(tag));
+    });
+    acc[key] = Array.from(values).sort((a, b) => a.localeCompare(b, 'zh-CN'));
+    return acc;
+  }, {});
+}
+
+function toArrayField(body, key) {
+  const raw = body[`${key}[]`] ?? body[key];
+  const values = Array.isArray(raw) ? raw : [raw];
+  return values
+    .flatMap((value) => String(value || '').split(/[,\n，、]/))
+    .map((value) => value.trim())
+    .filter(Boolean);
+}
+
+function uniqueValues(values) {
+  return Array.from(new Set(values));
+}
+
+function nextPoseId(poses) {
+  const max = poses.reduce((currentMax, pose) => {
+    const match = String(pose.id || '').match(/^p(\d+)$/);
+    return match ? Math.max(currentMax, Number(match[1])) : currentMax;
+  }, 0);
+  return `p${String(max + 1).padStart(3, '0')}`;
+}
+
+function removeUploadedFile(file) {
+  if (!file) return;
+  fs.unlink(file.path, () => {});
+}
+
 function ok(res, data, message = 'ok') {
   res.json({ success: true, data, message });
 }
@@ -81,6 +146,15 @@ function ok(res, data, message = 'ok') {
 function fail(res, status, message) {
   res.status(status).json({ success: false, data: null, message });
 }
+
+app.get('/api/pose-tags', (req, res) => {
+  try {
+    const { poses } = loadData();
+    return ok(res, collectPoseTags(poses));
+  } catch (error) {
+    return fail(res, 500, error.message);
+  }
+});
 
 app.get('/api/poses', (req, res) => {
   try {
@@ -104,6 +178,59 @@ app.get('/api/poses', (req, res) => {
   } catch (error) {
     return fail(res, 500, error.message);
   }
+});
+
+app.post('/api/poses', (req, res) => {
+  upload.single('image')(req, res, (uploadError) => {
+    if (uploadError) {
+      return fail(res, 400, uploadError.message);
+    }
+
+    try {
+      const { poses } = loadData();
+      const title = String(req.body.title || '').trim();
+      const guideDetails = String(req.body.guide_details || '').trim();
+      const keyPoints = String(req.body.key_points || '')
+        .split(/\r?\n/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+
+      if (!req.file) throw new Error('请上传姿势图片');
+      if (!title) throw new Error('请填写姿势标题');
+      if (!keyPoints.length) throw new Error('请至少填写一条姿势要领');
+      if (!guideDetails) throw new Error('请填写引导详解');
+
+      const tags = { type: ['通用'] };
+      editableTagKeys.forEach((key) => {
+        const values = uniqueValues(toArrayField(req.body, key));
+        if (!values.length) {
+          throw new Error(`请至少选择或新增一个${key}标签`);
+        }
+        tags[key] = values;
+      });
+
+      const pose = {
+        id: nextPoseId(poses),
+        title,
+        image_url: `/uploads/${req.file.filename}`,
+        icon: '📷',
+        tags,
+        key_points: keyPoints,
+        guide_details: guideDetails
+      };
+
+      if (!validatePose(pose)) {
+        throw new Error('姿势数据结构不合法');
+      }
+
+      poses.push(pose);
+      writeJson(POSES_PATH, poses);
+      return ok(res, toPublicPose(pose), '姿势已添加');
+    } catch (error) {
+      removeUploadedFile(req.file);
+      return fail(res, 400, error.message);
+    }
+  });
 });
 
 app.get('/api/poses/random', (req, res) => {
@@ -145,7 +272,7 @@ app.get('/api/quotes/random', (req, res) => {
 });
 
 app.get('/*splat', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+  res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
 });
 
 app.listen(PORT, () => {

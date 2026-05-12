@@ -208,14 +208,15 @@ const FAVORITES_KEY = 'pose_favorites_v1';
 const PAGE_SIZE = 6;
 const NAV_ACTIVE_CLASS = 'active';
 
-const filterConfig = {
-    emotion: { label: '情绪风格', options: ['所有', '欢快明朗', '阴郁情绪', '故事氛围', '街头酷炫', '通用'] },
-    scene: { label: '场景分类', options: ['所有', '森系', '海边', '扫街', '室内'] },
-    clothing: { label: '服装搭配', options: ['所有', '连衣裙', '百褶裙', '紧身衣', '公主裙'] },
-    props: { label: '使用道具', options: ['所有', '雨伞', '花束', '气球', '无道具'] },
-    people_count: { label: '出镜人数', options: ['所有', '单人', '双人', '多人合照'] }
+const filterLabels = {
+    emotion: '情绪风格',
+    scene: '场景分类',
+    clothing: '服装搭配',
+    props: '使用道具',
+    people_count: '出镜人数'
 };
 
+let filterConfig = {};
 let currentFilters = { emotion: '所有', scene: '所有', clothing: '所有', props: '所有', people_count: '所有' };
 let currentFilteredPoses = [];
 let currentPage = 1;
@@ -258,6 +259,21 @@ async function apiGet(path) {
         throw new Error(payload.message || '请求失败');
     }
     return payload.data;
+}
+
+async function loadFilterConfig() {
+    const tags = await apiGet(`${API_BASE}/pose-tags`);
+    filterConfig = Object.keys(filterLabels).reduce((acc, key) => {
+        acc[key] = {
+            label: filterLabels[key],
+            options: ['所有', ...(tags[key] || [])]
+        };
+        return acc;
+    }, {});
+    currentFilters = Object.keys(filterLabels).reduce((acc, key) => {
+        acc[key] = '所有';
+        return acc;
+    }, {});
 }
 
 async function openUnfilteredRandomModal() {
@@ -558,6 +574,7 @@ function onToggleFavorite() {
 
 document.addEventListener('DOMContentLoaded', async () => {
     initNavigation();
+    await loadFilterConfig();
     initFilters();
     await loadPoses(false);
     await displayRandomQuote();
