@@ -3,97 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>添加姿势 - 光影研究所</title>
+<title>姿势管理 - 光影研究所</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;800;900&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/theme.css">
 <style>
-.admin-shell {
-  min-height: 100vh;
-  overflow-y: auto;
-}
-.admin-main {
-  width: min(100%, 1120px);
-  margin: 0 auto;
-  padding: 2rem;
-}
-.admin-panel,
-.upload-box,
-.field-panel {
-  border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: var(--shadow);
-}
-.admin-panel {
-  border-radius: 30px;
-}
-.upload-box {
-  min-height: 420px;
-  border-radius: 24px;
-  overflow: hidden;
-}
-.preview-image {
-  width: 100%;
-  height: 100%;
-  min-height: 420px;
-  object-fit: cover;
-}
-.admin-input,
-.admin-textarea {
-  width: 100%;
-  color: var(--ink);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  background: #fff;
-  padding: 0.86rem 0.95rem;
-  outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-.admin-textarea {
-  min-height: 132px;
-  resize: vertical;
-}
-.admin-input:focus,
-.admin-textarea:focus {
-  border-color: var(--blue);
-  box-shadow: 0 0 0 4px rgba(37, 167, 242, 0.13);
-}
-.field-panel {
-  border-radius: 20px;
-  padding: 1rem;
-}
-.check-option {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  min-height: 2.2rem;
-  border: 1px solid #d4ecfb;
-  border-radius: 999px;
-  padding: 0.42rem 0.7rem;
-  color: #28617a;
-  background: #eef8ff;
-  font-size: 0.78rem;
-  font-weight: 900;
-}
-.check-option input {
-  accent-color: var(--blue-dark);
-}
-.status-box {
-  border-radius: 18px;
-  border: 1px solid var(--line);
-  background: #f8fcff;
-  color: var(--muted);
-}
+.admin-shell { min-height: 100vh; overflow-y: auto; }
+.admin-main { width: min(100%, 1180px); margin: 0 auto; padding: 2rem; }
+.admin-panel, .upload-box, .field-panel { border: 1px solid var(--line); background: rgba(255,255,255,.92); box-shadow: var(--shadow); }
+.admin-panel { border-radius: 30px; }
+.upload-box { min-height: 420px; border-radius: 24px; overflow: hidden; }
+.preview-image { width: 100%; height: 100%; min-height: 420px; object-fit: cover; }
+.admin-input, .admin-textarea { width: 100%; color: var(--ink); border: 1px solid var(--line); border-radius: 16px; background: #fff; padding: .86rem .95rem; outline: none; transition: border-color .2s ease, box-shadow .2s ease; }
+.admin-textarea { min-height: 132px; resize: vertical; }
+.admin-input:focus, .admin-textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(37,167,242,.13); }
+.field-panel { border-radius: 20px; padding: 1rem; }
+.check-option { display: inline-flex; align-items: center; gap: .45rem; min-height: 2.2rem; border: 1px solid #d4ecfb; border-radius: 999px; padding: .42rem .7rem; color: #28617a; background: #eef8ff; font-size: .78rem; font-weight: 900; }
+.check-option input { accent-color: var(--blue-dark); }
+.status-box { border-radius: 18px; border: 1px solid var(--line); background: #f8fcff; color: var(--muted); }
+.locked-input { background: #f7fbff; color: var(--muted); }
+.list-box { border: 1px solid var(--line); border-radius: 20px; background: rgba(255,255,255,.92); box-shadow: var(--shadow); }
+.list-item[aria-selected="true"] { background: #eef8ff; color: var(--blue-dark); }
 @media (max-width: 767px) {
-  .admin-main {
-    padding: 1rem 0.75rem 1.5rem;
-  }
-  .preview-image,
-  .upload-box {
-    min-height: 300px;
-  }
+  .admin-main { padding: 1rem .75rem 1.5rem; }
+  .preview-image, .upload-box { min-height: 300px; }
 }
 </style>
 </head>
@@ -104,27 +39,59 @@
       <div class="flex items-center gap-3 mb-4">
         <div class="brand-mark compact" aria-hidden="true"></div>
         <div>
-          <h1 class="display-font text-2xl font-black">姿势数据管理</h1>
+          <h1 class="display-font text-2xl font-black">姿势管理</h1>
           <p class="text-xs font-bold tracking-[0.2em] uppercase text-slate-500">Pose Admin</p>
         </div>
       </div>
-      <p class="eyebrow">新增姿势</p>
-      <h2 class="section-title mt-2 text-3xl sm:text-5xl font-black">添加一条新的拍摄姿势</h2>
+      <p class="eyebrow">管理姿势</p>
+      <h2 class="section-title mt-2 text-3xl sm:text-5xl font-black">编辑已有姿势，或继续新增</h2>
     </div>
     <a href="/" class="secondary-btn px-6 py-3 text-sm">返回图库</a>
   </header>
 
+  <section class="admin-panel p-5 sm:p-7 mb-6">
+    <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-5">
+      <div>
+        <p class="eyebrow">选择姿势</p>
+        <h3 class="section-title mt-2 text-2xl sm:text-3xl font-black">先选中一条已有姿势再编辑</h3>
+      </div>
+      <div class="flex gap-3">
+        <button type="button" id="btn-create-mode" class="secondary-btn px-5 py-3 text-sm">切换到新建</button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-4">
+      <div class="flex flex-col gap-3">
+        <input id="pose-search" class="admin-input" type="search" placeholder="按标题或 ID 搜索">
+        <div class="list-box overflow-hidden">
+          <select id="pose-picker" class="custom-select text-sm w-full border-0 rounded-none" size="10" aria-label="已有姿势列表"></select>
+        </div>
+      </div>
+      <div id="selected-summary" class="status-box hidden p-4">
+        <div class="flex items-center gap-3">
+          <div id="selected-icon" class="tool-icon aperture shrink-0"></div>
+          <div class="min-w-0">
+            <p class="text-xs font-black tracking-[0.18em] uppercase text-slate-500">当前编辑</p>
+            <p id="selected-title" class="display-font text-xl font-black truncate"></p>
+            <p id="selected-id" class="text-sm text-slate-500"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <form id="pose-form" class="admin-panel p-5 sm:p-7" enctype="multipart/form-data">
+    <input type="hidden" id="pose_id" name="pose_id">
     <div class="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-6">
       <section>
         <label class="filter-label block mb-2" for="image">姿势图片</label>
-        <label class="upload-box flex items-center justify-center cursor-pointer relative" for="image">
+        <label id="image-panel" class="upload-box flex items-center justify-center cursor-pointer relative" for="image">
           <input id="image" name="image" type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="sr-only" required>
           <img id="preview" class="preview-image hidden" alt="姿势图片预览">
           <div id="upload-empty" class="p-8 text-center">
-            <div class="tool-icon aperture mx-auto mb-5"></div>
-            <p class="display-font text-2xl font-black mb-2">选择图片</p>
-            <p class="text-sm leading-7 text-slate-500">支持 JPG、PNG、WEBP、GIF，上传后会保存到本地素材目录。</p>
+            <div id="upload-icon" class="tool-icon aperture mx-auto mb-5"></div>
+            <p id="upload-title" class="display-font text-2xl font-black mb-2">选择图片</p>
+            <p id="upload-note" class="text-sm leading-7 text-slate-500">支持 JPG、PNG、WEBP、GIF，上传后会保存到本地素材目录。</p>
           </div>
         </label>
       </section>
@@ -169,18 +136,34 @@ const tagLabels = {
   people_count: '出镜人数'
 };
 
+let tagOptions = {};
+let allPoses = [];
+let currentMode = 'create';
+let currentPose = null;
+let currentImageUrl = '';
 let objectUrl = null;
+let searchTerm = '';
 
 function escapeHtml(value) {
-  return String(value ?? '').replace(/[&<>"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[char]));
+  return String(value ?? '').replace(/[&<>"]/g, (char) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;'
+  }[char]));
 }
 
 async function apiGet(path) {
   const res = await fetch(path);
   const payload = await res.json();
-  if (!res.ok || !payload.success) {
-    throw new Error(payload.message || '请求失败');
-  }
+  if (!res.ok || !payload.success) throw new Error(payload.message || '请求失败');
+  return payload.data;
+}
+
+async function apiRequest(path, options) {
+  const res = await fetch(path, options);
+  const payload = await res.json();
+  if (!res.ok || !payload.success) throw new Error(payload.message || '请求失败');
   return payload.data;
 }
 
@@ -193,151 +176,292 @@ function showStatus(message, type = 'info') {
   status.style.color = type === 'error' ? '#be123c' : type === 'success' ? '#166534' : 'var(--muted)';
 }
 
-function selectedValuesFor(key) {
-  return Array.from(document.querySelectorAll(`input[name="${key}[]"]:checked`)).map((input) => input.value);
+function hideStatus() {
+  document.getElementById('status').classList.add('hidden');
 }
 
-function addCustomTag(key) {
-  const input = document.getElementById(`${key}-new`);
-  const value = input.value.trim();
-  if (!value) return;
+function getSelectedTags() {
+  return Object.keys(tagLabels).reduce((acc, key) => {
+    acc[key] = Array.from(document.querySelectorAll(`input[name="${key}[]"]:checked`)).map((input) => input.value);
+    return acc;
+  }, {});
+}
 
-  const existing = Array.from(document.querySelectorAll(`input[name="${key}[]"]`)).some((item) => item.value === value);
+function ensureCustomTag(key, value) {
+  const options = document.getElementById(`${key}-options`);
+  const existing = Array.from(options.querySelectorAll('input[type="checkbox"]')).find((input) => input.value === value);
   if (existing) {
-    document.querySelector(`input[name="${key}[]"][value="${CSS.escape(value)}"]`).checked = true;
-    input.value = '';
+    existing.checked = true;
     return;
   }
-
-  const options = document.getElementById(`${key}-options`);
   const label = document.createElement('label');
   label.className = 'check-option';
   label.innerHTML = `<input type="checkbox" name="${key}[]" value="${escapeHtml(value)}" checked><span>${escapeHtml(value)}</span>`;
   options.appendChild(label);
-  input.value = '';
 }
 
-function renderTagField(key, options) {
-  const section = document.createElement('section');
-  section.className = 'field-panel';
-  section.innerHTML = `
-    <label class="filter-label block mb-3">${escapeHtml(tagLabels[key])}</label>
-    <div id="${key}-options" class="flex flex-wrap gap-2 mb-3">
-      ${options.map((option) => `
-        <label class="check-option">
-          <input type="checkbox" name="${key}[]" value="${escapeHtml(option)}">
-          <span>${escapeHtml(option)}</span>
-        </label>
-      `).join('')}
-    </div>
-    <div class="flex gap-2">
-      <input id="${key}-new" class="admin-input text-sm py-2" type="text" placeholder="新增${escapeHtml(tagLabels[key])}">
-      <button class="secondary-btn px-4 py-2 text-sm shrink-0" type="button" data-add-tag="${key}">添加</button>
-    </div>
-  `;
-  return section;
-}
-
-async function initTags() {
-  const tags = await apiGet(`${API_BASE}/pose-tags`);
+function renderTagFields(selectedTags = {}) {
   const container = document.getElementById('tag-fields');
   container.innerHTML = '';
+
   Object.keys(tagLabels).forEach((key) => {
-    container.appendChild(renderTagField(key, tags[key] || []));
+    const field = document.createElement('section');
+    field.className = 'field-panel';
+    const merged = Array.from(new Set([...(tagOptions[key] || []), ...(selectedTags[key] || [])]));
+    const checkedValues = new Set(selectedTags[key] || []);
+
+    field.innerHTML = `
+      <label class="filter-label block mb-3">${escapeHtml(tagLabels[key])}</label>
+      <div id="${key}-options" class="flex flex-wrap gap-2 mb-3">
+        ${merged.map((option) => `
+          <label class="check-option">
+            <input type="checkbox" name="${key}[]" value="${escapeHtml(option)}" ${checkedValues.has(option) ? 'checked' : ''}>
+            <span>${escapeHtml(option)}</span>
+          </label>
+        `).join('')}
+      </div>
+      <div class="flex gap-2">
+        <input id="${key}-new" class="admin-input text-sm py-2" type="text" placeholder="新增${escapeHtml(tagLabels[key])}">
+        <button class="secondary-btn px-4 py-2 text-sm shrink-0" type="button" data-add-tag="${key}">添加</button>
+      </div>
+    `;
+    container.appendChild(field);
   });
+
   document.querySelectorAll('[data-add-tag]').forEach((button) => {
-    button.addEventListener('click', () => addCustomTag(button.dataset.addTag));
+    button.addEventListener('click', () => {
+      const key = button.dataset.addTag;
+      const input = document.getElementById(`${key}-new`);
+      const value = input.value.trim();
+      if (!value) return;
+      ensureCustomTag(key, value);
+      input.value = '';
+    });
   });
+
   Object.keys(tagLabels).forEach((key) => {
     document.getElementById(`${key}-new`)?.addEventListener('keydown', (event) => {
       if (event.key === 'Enter') {
         event.preventDefault();
-        addCustomTag(key);
+        const value = event.target.value.trim();
+        if (!value) return;
+        ensureCustomTag(key, value);
+        event.target.value = '';
       }
     });
   });
 }
 
-function initImagePreview() {
-  const input = document.getElementById('image');
+function updatePoseSummary(pose) {
+  const box = document.getElementById('selected-summary');
+  if (!pose) {
+    box.classList.add('hidden');
+    return;
+  }
+  box.classList.remove('hidden');
+  document.getElementById('selected-title').textContent = pose.title;
+  document.getElementById('selected-id').textContent = `ID: ${pose.id}`;
+  document.getElementById('selected-icon').textContent = pose.icon || '📷';
+}
+
+function setPreview(url, fallbackIcon = '📷') {
   const preview = document.getElementById('preview');
   const empty = document.getElementById('upload-empty');
-
-  input.addEventListener('change', () => {
-    if (objectUrl) URL.revokeObjectURL(objectUrl);
-    const file = input.files?.[0];
-    if (!file) {
-      preview.classList.add('hidden');
-      empty.classList.remove('hidden');
-      return;
-    }
-    objectUrl = URL.createObjectURL(file);
-    preview.src = objectUrl;
+  if (url) {
+    preview.src = url;
     preview.classList.remove('hidden');
     empty.classList.add('hidden');
+    preview.onerror = () => {
+      preview.classList.add('hidden');
+      empty.classList.remove('hidden');
+      document.getElementById('upload-icon').textContent = fallbackIcon;
+    };
+  } else {
+    preview.removeAttribute('src');
+    preview.classList.add('hidden');
+    empty.classList.remove('hidden');
+  }
+}
+
+function setMode(mode) {
+  currentMode = mode;
+  const isEdit = mode === 'edit';
+  document.getElementById('image').disabled = isEdit;
+  document.getElementById('title').readOnly = isEdit;
+  document.getElementById('title').classList.toggle('locked-input', isEdit);
+  document.getElementById('upload-title').textContent = isEdit ? '编辑模式' : '选择图片';
+  document.getElementById('upload-note').textContent = isEdit
+    ? '当前图片和标题保持不变，只修改标签、要领和引导详解。'
+    : '支持 JPG、PNG、WEBP、GIF，上传后会保存到本地素材目录。';
+  document.getElementById('btn-submit').textContent = isEdit ? '保存修改' : '保存姿势';
+  document.getElementById('btn-reset-form').textContent = isEdit ? '切换为新建' : '清空表单';
+}
+
+function resetToCreate() {
+  currentPose = null;
+  currentImageUrl = '';
+  searchTerm = '';
+  setMode('create');
+  document.getElementById('pose-form').reset();
+  document.getElementById('pose_id').value = '';
+  document.getElementById('pose-search').value = '';
+  renderTagFields();
+  updatePoseSummary(null);
+  setPreview('');
+  hideStatus();
+  renderPosePicker();
+}
+
+function renderPosePicker() {
+  const picker = document.getElementById('pose-picker');
+  const term = searchTerm.trim().toLowerCase();
+  const filtered = allPoses.filter((pose) => {
+    const haystack = `${pose.id} ${pose.title}`.toLowerCase();
+    return !term || haystack.includes(term);
+  });
+  picker.innerHTML = filtered.length
+    ? filtered.map((pose) => `<option value="${escapeHtml(pose.id)}">${escapeHtml(pose.id)} · ${escapeHtml(pose.title)}</option>`).join('')
+    : '<option value="">没有匹配的姿势</option>';
+  picker.value = currentPose ? currentPose.id : '';
+}
+
+async function loadReferenceData() {
+  const [poses, tags] = await Promise.all([
+    apiGet('/api/admin/poses'),
+    apiGet('/api/pose-tags')
+  ]);
+  allPoses = poses.sort((a, b) => a.id.localeCompare(b.id));
+  tagOptions = tags;
+  renderPosePicker();
+  if (currentMode === 'edit' && currentPose) {
+    renderTagFields(currentPose.tags);
+  } else {
+    renderTagFields();
+  }
+}
+
+async function loadPoseForEdit(id) {
+  const pose = await apiGet(`/api/poses/${id}`);
+  currentPose = pose;
+  currentImageUrl = pose.image_url || '';
+  document.getElementById('pose_id').value = pose.id;
+  document.getElementById('title').value = pose.title;
+  document.getElementById('key_points').value = (pose.key_points || []).join('\n');
+  document.getElementById('guide_details').value = pose.guide_details || '';
+  document.getElementById('pose-search').value = pose.title;
+  searchTerm = pose.title;
+  setMode('edit');
+  renderTagFields(pose.tags);
+  updatePoseSummary(pose);
+  setPreview(pose.image_url, pose.icon || '📷');
+  renderPosePicker();
+}
+
+function validateEditableFields() {
+  const keyPoints = document.getElementById('key_points').value.trim();
+  const guideDetails = document.getElementById('guide_details').value.trim();
+  if (!keyPoints) throw new Error('请至少填写一条姿势要领');
+  if (!guideDetails) throw new Error('请填写引导详解');
+  const selected = getSelectedTags();
+  Object.keys(tagLabels).forEach((key) => {
+    if (!selected[key].length) {
+      throw new Error(`请至少选择或新增一个${tagLabels[key]}`);
+    }
   });
 }
 
-function validateForm() {
-  for (const key of Object.keys(tagLabels)) {
-    if (!selectedValuesFor(key).length) {
-      throw new Error(`请至少选择或新增一个${tagLabels[key]}`);
-    }
-  }
-}
-
-function resetForm() {
-  document.getElementById('pose-form').reset();
-  document.querySelectorAll('#tag-fields input[type="checkbox"]').forEach((input) => { input.checked = false; });
-  const preview = document.getElementById('preview');
-  const empty = document.getElementById('upload-empty');
-  preview.classList.add('hidden');
-  empty.classList.remove('hidden');
-  if (objectUrl) {
-    URL.revokeObjectURL(objectUrl);
-    objectUrl = null;
-  }
+function validateCreateForm() {
+  if (!document.getElementById('image').files?.[0]) throw new Error('请上传姿势图片');
+  if (!document.getElementById('title').value.trim()) throw new Error('请填写姿势标题');
 }
 
 async function onSubmit(event) {
   event.preventDefault();
   const submit = document.getElementById('btn-submit');
   try {
-    validateForm();
+    validateEditableFields();
     submit.disabled = true;
-    submit.textContent = '保存中...';
-    showStatus('正在保存姿势数据...', 'info');
+    showStatus(currentMode === 'edit' ? '正在保存修改...' : '正在保存姿势数据...', 'info');
 
-    const formData = new FormData(event.currentTarget);
-    const res = await fetch(`${API_BASE}/poses`, {
-      method: 'POST',
-      body: formData
-    });
-    const payload = await res.json();
-    if (!res.ok || !payload.success) {
-      throw new Error(payload.message || '保存失败');
+    const tags = getSelectedTags();
+    const key_points = document.getElementById('key_points').value;
+    const guide_details = document.getElementById('guide_details').value;
+
+    if (currentMode === 'create') {
+      validateCreateForm();
+      const formData = new FormData();
+      formData.append('image', document.getElementById('image').files[0]);
+      formData.append('title', document.getElementById('title').value.trim());
+      Object.entries(tags).forEach(([key, values]) => {
+        values.forEach((value) => formData.append(`${key}[]`, value));
+      });
+      formData.append('key_points', key_points);
+      formData.append('guide_details', guide_details);
+      const created = await apiRequest('/api/poses', { method: 'POST', body: formData });
+      resetToCreate();
+      await loadReferenceData();
+      showStatus(`保存成功，新姿势 ID：${created.id}`, 'success');
+      return;
     }
 
-    showStatus(`保存成功，新姿势 ID：${payload.data.id}`, 'success');
-    resetForm();
-    await initTags();
+    const updated = await apiRequest(`/api/poses/${currentPose.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...tags, key_points, guide_details })
+    });
+    await loadReferenceData();
+    await loadPoseForEdit(updated.id);
+    showStatus(`保存成功，已更新 ${updated.id}`, 'success');
   } catch (error) {
     showStatus(error.message, 'error');
   } finally {
     submit.disabled = false;
-    submit.textContent = '保存姿势';
+    submit.textContent = currentMode === 'edit' ? '保存修改' : '保存姿势';
   }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
   try {
-    await initTags();
-    initImagePreview();
-    document.getElementById('pose-form').addEventListener('submit', onSubmit);
+    renderTagFields();
+    await loadReferenceData();
+    setMode('create');
+
+    document.getElementById('pose-search').addEventListener('input', (event) => {
+      searchTerm = event.target.value;
+      renderPosePicker();
+    });
+
+    document.getElementById('pose-picker').addEventListener('change', async (event) => {
+      if (!event.target.value) return;
+      await loadPoseForEdit(event.target.value);
+    });
+
+    document.getElementById('btn-create-mode').addEventListener('click', () => {
+      resetToCreate();
+    });
+
     document.getElementById('btn-reset-form').addEventListener('click', () => {
-      resetForm();
+      if (currentMode === 'edit') {
+        resetToCreate();
+        showStatus('已切换到新建模式。', 'info');
+        return;
+      }
+      resetToCreate();
       showStatus('表单已清空，可以继续添加。', 'info');
     });
+
+    document.getElementById('image').addEventListener('change', () => {
+      const file = document.getElementById('image').files?.[0];
+      if (!file) {
+        setPreview('');
+        return;
+      }
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+      objectUrl = URL.createObjectURL(file);
+      setPreview(objectUrl, '📷');
+    });
+
+    document.getElementById('pose-form').addEventListener('submit', onSubmit);
   } catch (error) {
     showStatus(error.message, 'error');
   }

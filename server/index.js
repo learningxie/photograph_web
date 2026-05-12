@@ -19,6 +19,13 @@ app.use(express.static(PUBLIC_DIR));
 
 const allowedTagKeys = ['type', 'emotion', 'scene', 'clothing', 'props', 'people_count'];
 const editableTagKeys = ['emotion', 'scene', 'clothing', 'props', 'people_count'];
+const editableTagLabels = {
+  emotion: '情绪风格',
+  scene: '场景分类',
+  clothing: '服装搭配',
+  props: '使用道具',
+  people_count: '出镜人数'
+};
 const imageMimeTypes = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
 
 const upload = multer({
@@ -122,8 +129,34 @@ function toArrayField(body, key) {
     .filter(Boolean);
 }
 
+function parseKeyPoints(value) {
+  return String(value || '')
+    .split(/\r?\n/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
 function uniqueValues(values) {
   return Array.from(new Set(values));
+}
+
+function collectEditableFields(body) {
+  const tags = {};
+  editableTagKeys.forEach((key) => {
+    const values = uniqueValues(toArrayField(body, key));
+    if (!values.length) {
+      throw new Error(`请至少选择或新增一个${editableTagLabels[key]}标签`);
+    }
+    tags[key] = values;
+  });
+
+  const key_points = parseKeyPoints(body.key_points);
+  const guide_details = String(body.guide_details || '').trim();
+
+  if (!key_points.length) throw new Error('请至少填写一条姿势要领');
+  if (!guide_details) throw new Error('请填写引导详解');
+
+  return { tags, key_points, guide_details };
 }
 
 function nextPoseId(poses) {
@@ -180,6 +213,15 @@ app.get('/api/poses', (req, res) => {
   }
 });
 
+app.get('/api/admin/poses', (req, res) => {
+  try {
+    const { poses } = loadData();
+    return ok(res, poses.map(toPublicPose));
+  } catch (error) {
+    return fail(res, 500, error.message);
+  }
+});
+
 app.post('/api/poses', (req, res) => {
   upload.single('image')(req, res, (uploadError) => {
     if (uploadError) {
@@ -189,34 +231,19 @@ app.post('/api/poses', (req, res) => {
     try {
       const { poses } = loadData();
       const title = String(req.body.title || '').trim();
-      const guideDetails = String(req.body.guide_details || '').trim();
-      const keyPoints = String(req.body.key_points || '')
-        .split(/\r?\n/)
-        .map((item) => item.trim())
-        .filter(Boolean);
 
       if (!req.file) throw new Error('请上传姿势图片');
       if (!title) throw new Error('请填写姿势标题');
-      if (!keyPoints.length) throw new Error('请至少填写一条姿势要领');
-      if (!guideDetails) throw new Error('请填写引导详解');
-
-      const tags = { type: ['通用'] };
-      editableTagKeys.forEach((key) => {
-        const values = uniqueValues(toArrayField(req.body, key));
-        if (!values.length) {
-          throw new Error(`请至少选择或新增一个${key}标签`);
-        }
-        tags[key] = values;
-      });
+      const { tags, key_points, guide_details } = collectEditableFields(req.body);
 
       const pose = {
         id: nextPoseId(poses),
         title,
         image_url: `/uploads/${req.file.filename}`,
         icon: '📷',
-        tags,
-        key_points: keyPoints,
-        guide_details: guideDetails
+        tags: { type: ['通用'], ...tags },
+        key_points,
+        guide_details
       };
 
       if (!validatePose(pose)) {
@@ -231,6 +258,39 @@ app.post('/api/poses', (req, res) => {
       return fail(res, 400, error.message);
     }
   });
+});
+
+app.put('/api/poses/:id', (req, res) => {
+  try {
+    const { poses } = loadData();
+    const index = poses.findIndex((pose) => pose.id === req.params.id);
+    if (index === -1) {
+      return fail(res, 404, '姿势不存在');
+    }
+
+    const current = poses[index];
+    const { tags, key_points, guide_details } = collectEditableFields(req.body);
+    const updated = {
+      ...current,
+      tags: {
+        ...current.tags,
+        ...tags,
+        type: current.tags?.type?.length ? current.tags.type : ['通用']
+      },
+      key_points,
+      guide_details
+    };
+
+    if (!validatePose(updated)) {
+      return fail(res, 400, '姿势数据结构不合法');
+    }
+
+    poses[index] = updated;
+    writeJson(POSES_PATH, poses);
+    return ok(res, toPublicPose(updated), '姿势已更新');
+  } catch (error) {
+    return fail(res, 400, error.message);
+  }
 });
 
 app.get('/api/poses/random', (req, res) => {
